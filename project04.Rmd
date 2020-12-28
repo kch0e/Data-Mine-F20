@@ -1,0 +1,123 @@
+---
+title: "Project 4 Solutions"
+output:
+  pdf_document: default
+---
+
+```{r, include=F}
+# Run this code chunk first to activate the course Python environment.
+# Do not remove this. It will not show up in your compiled PDF.
+datamine_py()
+
+# Install packages if not already installed.
+list.of.packages <- c("knitr")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
+# Remove ## from output.
+library(knitr)
+opts_chunk$set(comment = NA)
+```
+
+## Kevin Choe
+
+## Collaborators: N/A
+## TA help: Hilda Ibriga and Katie Brinkers guided with problems 1-5, explained new concepts
+## Online resources used: Stat 190 Example Book (All problems)
+
+### Question 1
+
+```{r}
+splash_mountain <- read.csv("/class/datamine/data/disney/splash_mountain.csv")
+
+total <- 0
+length_notna_not99 <- 0
+for (i in splash_mountain$SPOSTMIN) {
+  #Testing whether value in SPOSTMIN is na or -999
+  if ((!is.na(i)) & (i != -999)) {
+  #Updating total with values of SPOSTMIN that met conditions above
+    total <- total + i
+  #Counting many elements are not na or -999
+  length_notna_not99 <- length_notna_not99 + 1
+  }
+}
+total
+mean = total/length_notna_not99
+mean
+#Number of values that are not na or -999
+```
+The mean posted wait time is 43.38925
+
+### Question 2
+
+```{r}
+splash_mountain <- read.csv("/class/datamine/data/disney/splash_mountain.csv")
+
+status <- c()
+for (i in 1: nrow(splash_mountain)) {
+  #Takes values applies of closed to each row that does not meet its criteria
+  if(any(splash_mountain[i, c("SPOSTMIN", "SACTMIN")] == -999, na.rm=T)) {
+    status[i] <- "closed"
+  }
+  #Takes values applies of open to each row that meet its criteria
+  else {
+    status[i] <- "open"
+    
+  }
+}
+#Making a new column by converting status to a factor
+splash_mountain$status <- factor(status)
+head(splash_mountain)
+head(splash_mountain$status)
+table(splash_mountain$status)
+str(splash_mountain)
+```
+The output for closed is 24326 and the open one is 199610.
+
+### Question 3
+
+```{r}
+splash_mountain <- read.csv("/class/datamine/data/disney/splash_mountain.csv")
+#Creating a new column called status and assigning new values to open
+splash_mountain$status <- "open"
+
+#Change values that are open to closed if they do not meet the criteria
+splash_mountain$status[which(splash_mountain$SPOSTMIN == -999 | splash_mountain$SACTMIN == -999)] <- "Closed"
+#Make a new column called status
+splash_mountain$status <- factor(status)
+str(splash_mountain)
+```
+
+### Question 4
+
+```{r}
+#Tabulating status (table of count) then made pie function
+splash_mountain_open_closed_pie_chart <- pie(table(splash_mountain$status))
+```
+
+### Question 5
+
+```{r}
+#New vector with ride names
+ride_names <- c("splash_mountain", "soarin", "pirates_of_caribbean", "expedition_everest", "flight_of_passage", "rock_n_rollercoaster")
+#Pasting vector and attaching .csv
+ride_files <- paste0(c("/class/datamine/data/disney/"), ride_names, ".csv")
+par(mfrow=c(2,3))
+for (i in 1:length(ride_names)) {
+  #Store files into dataframe
+  ride_dataframe <- read.csv(ride_files[i])
+  ride_dataframe$status <- "open"
+  #Change values that are open to closed if they do not meet the criteria
+  ride_dataframe$status[which(ride_dataframe$SPOSTMIN == -999 | ride_dataframe$SACTMIN == -999)] <- "Closed"
+  #Make a new column called status
+  ride_dataframe$status <- factor(ride_dataframe$status)
+  #Made Pie function
+  pie(table(ride_dataframe$status), main = ride_names[i])
+}
+```
+
+## Pledge
+
+By submitting this work I hereby pledge that this is my own, personal work. I've acknowledged in the designated place at the top of this file all sources that I used to complete said work, including but not limited to: online resources, books, and electronic communications. I've noted all collaboration with fellow students and/or TA's. I did not copy or plagiarize another's work.
+
+> As a Boilermaker pursuing academic excellence, I pledge to be honest and true in all that I do. Accountable together - We are Purdue.
